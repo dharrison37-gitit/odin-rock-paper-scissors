@@ -20,7 +20,6 @@ function getHumanChoice() {
 
 function playRound(humanChoice, computerChoice) {
     humanChoice = humanChoice.toLowerCase();
-    let win = false;
 
     if(humanChoice === computerChoice){
         console.log("Tie!")
