@@ -25,17 +25,16 @@ function getWinner(player, computer) {
 function updateScoreBoard(winner) {
     if (winner === "player") {
         runningScores.textContent = playerScore;
-        gameResults.textContent = "Player wins!";
+        gameResults.textContent = "Player wins round.";
     } else if (winner === "computer") {
         runningScores.textContent = computerScore;
-        gameResults.textContent = "Computer wins!";
+        gameResults.textContent = "Computer wins round";
     } else {
-        gameResults.textContent = "A tie";
+        gameResults.textContent = "Round Tie";
     }
 }
 
 function playRound(playerChoice, computerChoice) {
-    if (!keepPlaying) return;
     let roundWinner;
     if (computerChoice === playerChoice) {
         roundWinner = "none";
@@ -46,6 +45,21 @@ function playRound(playerChoice, computerChoice) {
     ) {
         playerScore++;
         roundWinner = "player";
+        if (playerScore >= PLAYER_MATCH_SCORE) {
+            const gameOverEvent = new CustomEvent("gameOver", {
+                detail: {
+                    winner:
+                        playerScore === computerScore
+                            ? "It's a tie."
+                            : playerScore > computerScore
+                              ? "You won!"
+                              : "Computer won.",
+                },
+            });
+            window.dispatchEvent(gameOverEvent);
+            keepPlaying = false;
+            return;
+        }
     } else {
         computerScore++;
         roundWinner = "computer";
@@ -54,33 +68,38 @@ function playRound(playerChoice, computerChoice) {
 }
 
 function playGame(pChoice) {
-    let playerChoice = pChoice;
+    if (!keepPlaying) return;
     let computerChoice = getComputerChoice();
     let message = "";
     let scores = "";
     let roundWinner = "";
 
-    if (playerScore < 5) {
-        playRound(playerChoice, computerChoice);
-    } else {
-        message = `Game Over - ${getWinner(playerScore, computerScore)}`;
-        keepPlaying = false;
-    }
-    choices.textContent = `Player chose: ${playerChoice} | Computer chose: ${computerChoice}`;
-    gameResults.textContent = message;
-    runningScores.textContent = `Player: ${playerScore} | Computer: ${computerScore}`;
+    playRound(pChoice, computerChoice);
+
+    choices.textContent = `Player chose: ${pChoice} | Computer chose: ${computerChoice}`;
+    runningScores.textContent = `Scores: Player: ${playerScore} | Computer: ${computerScore}`;
 }
 
 let playerScore = 0;
 let computerScore = 0;
 let keepPlaying = true;
+
+const PLAYER_MATCH_SCORE = 5;
 const gameResults = document.querySelector("#game-results");
 const runningScores = document.querySelector("#scores");
 const playerControls = document.querySelector("#player-controls");
 const choices = document.querySelector("#choices");
+
 playerControls.addEventListener("click", (e) => {
     if (!keepPlaying) return;
 
-    let playerChoice = e.target.id;
+    const button = e.target.closest("button");
+    if (!button) return;
+
+    let playerChoice = button.id;
     playGame(playerChoice);
+});
+
+window.addEventListener("gameOver", (e) => {
+    gameResults.textContent = `Game Over: ${e.detail.winner}`;
 });
