@@ -16,3 +16,7 @@
 
 - Created a custom event that fires when player score reaches five (5)
 - Appears to have fixed a bug which required an extra push of button to end game
+
+## Styling
+
+- Added some style to the page to remove boring and plain
