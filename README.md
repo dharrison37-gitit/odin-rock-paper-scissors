@@ -1,7 +1,8 @@
 # odin-rock-paper-scissors
 
-## Simple project that only uses the browser console for output
+## Project that plays rock, paper, and scissors
 
+- Initial output was to the console, updated to browser UI
 - Created functions to break apart functionality
 - Practiced writing pseudocode for the functions
 - Tested output via the console by logging results
